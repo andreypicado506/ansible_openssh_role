@@ -1,0 +1,8 @@
+---
+- name: Install and configure OpenSHH
+  include_tasks: configure_openssh.yml
+  tags: [always, install]
+
+- name: Set SSH public key
+  include_tasks: set_public_key.yml
+  tags: [always, install, generate_key]

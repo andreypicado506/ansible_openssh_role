@@ -1,0 +1,16 @@
+- name: Install and configure OpenSSH on Windows
+  hosts: "{{ SERVER }}"
+  gather_facts: true
+  vars:
+    ansible_connection: winrm
+    ansible_user: Administrator
+    ansible_password: COnejo21@..
+    ansible_winrm_server_cert_validation: ignore
+    ansible_port: 5985
+    ansible_winrm_transport: ntlm
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_user: Administrator
+
+  roles:
+    - role: openssh_windows

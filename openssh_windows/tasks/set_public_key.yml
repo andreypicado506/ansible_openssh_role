@@ -1,0 +1,21 @@
+- name: Create the working directory
+  ansible.windows.win_shell: |
+    New-Item -ItemType Directory -Force -Path "{{ WORKING_DIRECTORY }}"
+
+- name: Copy public ssh key
+  ansible.windows.win_copy:
+    src: /home/zaratustra/blog/id_rsa.pub
+    dest: '{{ WORKING_DIRECTORY }}\id_rsa.pub'
+
+- name: Configuring the right permissions for the key
+  ansible.windows.win_shell: |
+    $pubKeyPath = "{{ WORKING_DIRECTORY }}\{{ PUBLIC_SSH_KEY_LOCAL_FILE_NAME }}"
+    $authorizedKey = Get-Content -Path $pubKeyPath
+    if (Test-Path -Path C:\ProgramData\ssh\administrators_authorized_keys) {
+      Add-Content -Path C:\ProgramData\ssh\administrators_authorized_keys -Value $authorizedKey
+    }
+    else {
+      New-Item -ItemType File -Path C:\ProgramData\ssh\administrators_authorized_keys -Force
+      Add-Content -Path C:\ProgramData\ssh\administrators_authorized_keys -Value $authorizedKey
+    }  
+    icacls.exe ""C:\ProgramData\ssh\administrators_authorized_keys"" /inheritance:r /grant ""Administrators:F"" /grant ""SYSTEM:F""
